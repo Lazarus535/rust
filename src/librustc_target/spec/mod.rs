@@ -55,6 +55,7 @@ mod hermit_base;
 mod linux_base;
 mod linux_kernel_base;
 mod linux_musl_base;
+mod none_base;
 mod openbsd_base;
 mod netbsd_base;
 mod solaris_base;
@@ -422,6 +423,8 @@ supported_targets! {
     ("aarch64-fuchsia", aarch64_fuchsia),
     ("x86_64-fuchsia", x86_64_fuchsia),
 
+    ("avr-unknown-unknown", avr_unknown_unknown),
+
     ("x86_64-unknown-l4re-uclibc", x86_64_unknown_l4re_uclibc),
 
     ("aarch64-unknown-redox", aarch64_unknown_redox),
@@ -527,7 +530,7 @@ pub struct Target {
     /// Vendor name to use for conditional compilation.
     pub target_vendor: String,
     /// Architecture to use for ABI considerations. Valid options include: "x86",
-    /// "x86_64", "arm", "aarch64", "mips", "powerpc", "powerpc64", and others.
+    /// "x86_64", "arm", "aarch64", "avr", "mips", "powerpc", "powerpc64", and others.
     pub arch: String,
     /// [Data layout](http://llvm.org/docs/LangRef.html#data-layout) to pass to LLVM.
     pub data_layout: String,
@@ -880,6 +883,12 @@ impl Default for TargetOptions {
             merge_functions: MergeFunctions::Aliases,
             target_mcount: "mcount".to_string(),
         }
+    }
+}
+
+impl TargetOptions {
+    pub fn is_specific_cpu(&self) -> bool {
+        self.cpu != "generic"
     }
 }
 
