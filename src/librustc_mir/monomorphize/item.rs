@@ -1,6 +1,6 @@
 use rustc::hir::def_id::LOCAL_CRATE;
 use rustc::mir::mono::MonoItem;
-use rustc::session::config::OptLevel;
+use rustc::session::config::{OptLevel, Lto};
 use rustc::ty::{self, TyCtxt, Instance};
 use rustc::ty::subst::InternalSubsts;
 use rustc::ty::print::obsolete::DefPathBasedNames;
@@ -65,7 +65,7 @@ pub trait MonoItemExt<'tcx>: fmt::Debug {
     fn instantiation_mode(&self, tcx: TyCtxt<'tcx>) -> InstantiationMode {
         let inline_in_all_cgus =
             tcx.sess.opts.debugging_opts.inline_in_all_cgus.unwrap_or_else(|| {
-                tcx.sess.opts.optimize != OptLevel::No
+                tcx.sess.opts.optimize != OptLevel::No && if tcx.sess.lto() == Lto::No
             }) && !tcx.sess.opts.cg.link_dead_code;
 
         match *self.as_mono_item() {
